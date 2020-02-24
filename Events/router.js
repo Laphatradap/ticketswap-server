@@ -4,7 +4,7 @@ const Event = require("./model");
 const router = new Router();
 
 
-router.get("/event", async (req, res, next) => {
+router.get("/events", async (req, res, next) => {
   try {
     const events = await Event.findAll();
     res.send(events);
@@ -13,7 +13,7 @@ router.get("/event", async (req, res, next) => {
   }
 });
 
-router.post("/event", async (req, res, next) => {
+router.post("/events", async (req, res, next) => {
   try {
     await Event.create(req.body).then(event => {
       res.json(event);
