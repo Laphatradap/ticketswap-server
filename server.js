@@ -1,16 +1,16 @@
 const express = require("express");
-
-const app = express();
-const port = process.env.PORT || 4000
-
-const cors = require("cors")
-const corsMiddleware = cors()
-app.use(corsMiddleware)
-
+const cors = require("cors");
 const bodyParser = require("body-parser");
-app.use(bodyParser.json())
 
-const userRoutes = require('./User/router')
-app.use(userRoutes)
+const userRoutes = require("./User/router");
+const eventRoutes = require("./Event/router");
 
-app.listen(port, () => console.log("listening on port " + port)); 
+const port = process.env.PORT || 4000;
+const app = express();
+
+app
+  .use(bodyParser.json())
+  .use(cors())
+  .use(userRoutes)
+  .use(eventRoutes)
+  .listen(port, () => console.log("listening on port " + port));
