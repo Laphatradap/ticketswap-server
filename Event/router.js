@@ -3,7 +3,6 @@ const Event = require("./model");
 
 const router = new Router();
 
-
 router.get("/events", async (req, res, next) => {
   try {
     const events = await Event.findAll();
@@ -23,6 +22,14 @@ router.post("/events", async (req, res, next) => {
   }
 });
 
+router.get("/events/:id", async (req, res, next) => {
+  const eventId = await Event.findByPk(req.params.id);
+  if (!eventId) {
+    res.status(404).send("Event not found!");
+  } else {
+    res.json(eventId);
+  }
+});
 
 // const data = [{
 //   name: "Mysteryland",

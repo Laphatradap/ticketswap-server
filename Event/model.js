@@ -10,7 +10,5 @@ const Event = db.define("event", {
 });
 
 
-
-
 module.exports = Event;
 
