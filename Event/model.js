@@ -1,5 +1,6 @@
 const db = require("../db");
 const Sequelize = require("sequelize");
+const Ticket = require("../Ticket/model")
 
 const Event = db.define("event", {
   name: Sequelize.STRING,
@@ -9,6 +10,8 @@ const Event = db.define("event", {
   imgUrl: Sequelize.STRING
 });
 
+Ticket.belongsTo(Event)
+Event.hasMany(Ticket)
 
 module.exports = Event;
 

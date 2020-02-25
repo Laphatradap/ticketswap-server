@@ -9,6 +9,4 @@ const Ticket = db.define("ticket", {
   imgUrl: Sequelize.STRING
 });
 
-Ticket.belongsTo(Event)
-
 module.exports = Ticket;

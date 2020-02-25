@@ -1,11 +1,21 @@
 const { Router } = require("express");
 const Event = require("./model");
+const Ticket = require("../Ticket/model");
 
 const router = new Router();
 
+// router.get("/events", async (req, res, next) => {
+//   try {
+//     const events = await Event.findAll();
+//     res.send(events);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
 router.get("/events", async (req, res, next) => {
   try {
-    const events = await Event.findAll();
+    const events = await Event.findAll({ include: [Ticket] });
     res.send(events);
   } catch (error) {
     next(error);
@@ -22,12 +32,28 @@ router.post("/events", async (req, res, next) => {
   }
 });
 
+// router.get("/events/:id", async (req, res, next) => {
+//   console.log("what is REQ.PARAMS", req.params.id)
+//   const eventId = await Event.findByPk(req.params.id);
+//   if (!eventId) {
+//     res.status(404).send("Event not found!");
+//   } else {
+//     res.json(eventId);
+//   }
+// });
+
 router.get("/events/:id", async (req, res, next) => {
-  const eventId = await Event.findByPk(req.params.id);
-  if (!eventId) {
-    res.status(404).send("Event not found!");
+  const oneEvent = await Event.findAll({
+    include: [Ticket],
+    where: {
+      id: req.params.id
+    }
+  });
+  console.log("OneEvent", oneEvent);
+  if(!req.params.id) {
+    res.status(404).send("Event not found!")
   } else {
-    res.json(eventId);
+    res.json(oneEvent)
   }
 });
 
@@ -39,7 +65,7 @@ router.get("/events/:id", async (req, res, next) => {
 //   imgUrl: "https://media.iamsterdam.com/ndtrc/Images/93/9384efb1-632d-484c-9e77-ee1e712cb590/cd59808c-5c71-4362-b78c-30aa5625ad59.jpg",
 //   createdAt: new Date(),
 //   updatedAt: new Date()
-// }, 
+// },
 // {
 //   name: "Sonic Acts Academy 2020",
 //   description: "Sonic Acts Academy is a three-day festival of innovative audio-visual and performative art and critical thinking, motivated by ecological, political, technological and social change in our environment. From 21 to 23 February 2020 in Amsterdam, the Academy transforms partnering institutions – Paradiso, De Brakke Grond, Stedelijk Museum Amsterdam and OT301 – into a thought-provoking space for new developments in artistic research.",
@@ -60,7 +86,5 @@ router.get("/events/:id", async (req, res, next) => {
 //   .catch(function(error) {
 //     res.json(error)
 //   })
-
-
 
 module.exports = router;
