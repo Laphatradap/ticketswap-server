@@ -43,17 +43,21 @@ router.post("/events", async (req, res, next) => {
 // });
 
 router.get("/events/:id", async (req, res, next) => {
-  const oneEvent = await Event.findAll({
-    include: [Ticket],
-    where: {
-      id: req.params.id
+  try {
+    const oneEvent = await Event.findAll({
+      include: [Ticket],
+      where: {
+        id: req.params.id
+      }
+    });
+    // console.log("OneEvent", oneEvent);
+    if(!req.params.id) {
+      res.status(404).send("Event not found!")
+    } else {
+      res.json(oneEvent)
     }
-  });
-  console.log("OneEvent", oneEvent);
-  if(!req.params.id) {
-    res.status(404).send("Event not found!")
-  } else {
-    res.json(oneEvent)
+  } catch(error) {
+    next(error)
   }
 });
 
