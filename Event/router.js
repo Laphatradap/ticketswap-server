@@ -14,6 +14,7 @@ const router = new Router();
 // });
 
 router.get("/events", async (req, res, next) => {
+  // console.log("req query", req.query)
   try {
     const events = await Event.findAll({ include: [Ticket] });
     res.send(events);
