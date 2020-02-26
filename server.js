@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const userRoutes = require("./User/router");
 const eventRoutes = require("./Event/router");
 const ticketRoutes = require("./Ticket/router")
+const commentRoutes = require("./Comment/router")
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -15,4 +16,5 @@ app
   .use(userRoutes)
   .use(eventRoutes)
   .use(ticketRoutes)
+  .use(commentRoutes)
   .listen(port, () => console.log("listening on port " + port));
