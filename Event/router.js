@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const Event = require("./model");
 const Ticket = require("../Ticket/model");
+const User = require("../User/model");
 
 const router = new Router();
 
@@ -46,19 +47,24 @@ router.post("/events", async (req, res, next) => {
 router.get("/events/:id", async (req, res, next) => {
   try {
     const oneEvent = await Event.findAll({
-      include: [Ticket],
+      include: [
+        {
+          model: Ticket,
+          attributes: ["id", "price", "description", "imgUrl", "userId" ]
+        }
+      ],
       where: {
         id: req.params.id
       }
     });
     // console.log("OneEvent", oneEvent);
-    if(!req.params.id) {
-      res.status(404).send("Event not found!")
+    if (!req.params.id) {
+      res.status(404).send("Event not found!");
     } else {
-      res.json(oneEvent)
+      res.json(oneEvent);
     }
-  } catch(error) {
-    next(error)
+  } catch (error) {
+    next(error);
   }
 });
 

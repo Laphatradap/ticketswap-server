@@ -1,6 +1,7 @@
 const db = require("../db");
 const Sequelize = require("sequelize");
 const Ticket = require("../Ticket/model")
+const User = require("../User/model")
 
 const Event = db.define("event", {
   name: Sequelize.STRING,

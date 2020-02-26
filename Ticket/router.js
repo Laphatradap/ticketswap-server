@@ -3,6 +3,7 @@ const Sequelize = require("sequelize");
 
 const Ticket = require("./model");
 const Comment = require("../Comment/model")
+const User = require("../User/model")
 const router = new Router();
  
 router.post("/tickets", async (req, res, next) => {
@@ -20,6 +21,12 @@ router.get("/tickets/:id", async (req, res, next) => {
   try {
     // Calculate risk score
     let ticket = await Ticket.findAll({
+      include: [
+        {
+          model: User,
+          attributes: ["name"]
+        }
+      ],
       where: {
         id: req.params.id
       }
