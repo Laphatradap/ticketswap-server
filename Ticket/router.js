@@ -24,7 +24,7 @@ router.get("/tickets/:id", async (req, res, next) => {
       include: [
         {
           model: User,
-          attributes: ["name"]
+          attributes: ["username"]
         }
       ],
       where: {

@@ -2,51 +2,68 @@ const { Router } = require("express");
 const User = require("./model");
 const bcrypt = require("bcrypt");
 const { toJWT } = require("../auth/jwt");
+const authMiddleware = require("../User/model")
 
 const router = new Router();
 
-router.post("/user", async (request, response) => {
-  if (!request.body.email || !request.body.password) {
-    return response
-      .status(400)
-      .send("Missing email or password in request body");
+router.get("/user", async (req, res, next) => {
+  try {
+    const allUsers = await User.findAll();
+    res.json(allUsers);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.post("/user", async (req, res) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    return response.status(400).send("Missing username, email or password");
   }
 
-  const hashedPassword = bcrypt.hashSync(request.body.password, 10);
+  const hashedPassword = bcrypt.hashSync(req.body.password, 10);
 
   try {
     await User.create({
-      ...request.body,
+      ...req.body,
       password: hashedPassword
     });
-    response.status(201).send("User created");
+    res.status(201).send("User created");
   } catch (error) {
     console.log(error.name);
+
     switch (error.name) {
       case "SequelizeUniqueConstraintError":
-        return response.status(400).send({ message: "Email not unique" });
-
+        return res.status(400).send({ message: "Email not unique" });
       default:
-        return response.status(400).send("Baaaddd request");
+        return res.status(400).send("Bad request");
     }
   }
 });
 
-router.post("/login", async (request, response) => {
-  console.log(request.body);
+router.post("/login", async (req, res) => {
+  // console.log(req.body);
+  const { email, password } = req.body;
 
-  const user = await User.findOne({ where: { email: request.body.email } });
+  const user = await User.findOne({ where: { email: email } });
 
-  const passwordValid = bcrypt.compareSync(
-    request.body.password,
-    user.password
-  );
-
-  if (passwordValid) {
+  if (!user) {
+    res.status(400).send({
+      message: "User with that email does not exist"
+    });
+  } else if (bcrypt.compareSync(password, user.password)) {
     const token = toJWT({ id: user.id });
-
-    return response.status(200).send({ token: token });
+    res.status(200).send({ token: token });
+  } else {
+    res.status(400).send({
+      message: "Password was incorrect"
+    });
   }
 });
 
+router.get("/test-auth", authMiddleware, (req, res) => {
+  res.send({
+    Message: "thanks for visiting ${req.user.email}"
+  });
+});
 module.exports = router;
