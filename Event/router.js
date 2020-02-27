@@ -1,8 +1,9 @@
 const { Router } = require("express");
 const Event = require("./model");
 const Ticket = require("../Ticket/model");
-const User = require("../User/model");
+// const User = require("../User/model");
 const { Op } = require("sequelize");
+const auth = require("../auth/authMiddleware")
 
 const router = new Router();
 
@@ -24,8 +25,16 @@ today = yyyy + "-" + mm + "-" + dd
 
 router.get("/events", async (req, res, next) => {
   // console.log("req query", req.query)
+  const limit = Math.min(req.query.limit || 9, 500)
+  const offset = req.query.offset || 0
+
   try {
-    const events = await Event.findAll({
+    const events = await Event.findAndCountAll({
+      limit,
+      offset,
+      order: [
+        ['createdAt', 'DESC']
+      ],
       include: [Ticket],
       where: {
         end_date: {
@@ -33,9 +42,9 @@ router.get("/events", async (req, res, next) => {
         }
       }
     });
-    res.send(events);
+    res.send({ events: events.rows, total: events.count });
   } catch (error) {
-    next(error);
+    next (error);
   }
 });
 
@@ -49,15 +58,16 @@ router.get("/events", async (req, res, next) => {
 //   }
 // });
 
-router.post("/events", async (req, res, next) => {
+router.post("/newEvent", auth, async (req, res, next) => {
   try {
-    await Event.create(req.body).then(event => {
-      res.json(event);
-    });
-  } catch (error) {
+    console.log("user vlue", req.user.dataValues.id)
+    const newEvent = {...req.body, userId: req.user.dataValues.id}
+    const event = await Event.create(newEvent)
+      res.status(201).send(event);
+    } catch (error) {
     next(error);
-  }
-});
+  }});
+
 
 // router.get("/events/:id", async (req, res, next) => {
 //   console.log("what is REQ.PARAMS", req.params.id)
