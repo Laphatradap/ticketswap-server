@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const Event = require("./model");
 const Ticket = require("../Ticket/model");
-// const User = require("../User/model");
+const User = require("../User/model");
 const { Op } = require("sequelize");
 const auth = require("../auth/authMiddleware")
 
@@ -59,14 +59,17 @@ router.get("/events", async (req, res, next) => {
 // });
 
 router.post("/newEvent", auth, async (req, res, next) => {
+  console.log("user value", req.user.dataValues.id)
   try {
-    console.log("user vlue", req.user.dataValues.id)
     const newEvent = {...req.body, userId: req.user.dataValues.id}
-    const event = await Event.create(newEvent)
-      res.status(201).send(event);
-    } catch (error) {
-    next(error);
-  }});
+    await Event
+      .create(newEvent)
+      .then(event => res.json(event))
+  } catch (error) {
+    next(error)
+    
+  }
+  });
 
 
 // router.get("/events/:id", async (req, res, next) => {

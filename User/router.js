@@ -42,7 +42,7 @@ router.post("/user", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  // console.log(req.body);
+  console.log(req.body);
   const { email, password } = req.body;
 
   const user = await User.findOne({ where: { email: email } });
@@ -53,7 +53,7 @@ router.post("/login", async (req, res) => {
     });
   } else if (bcrypt.compareSync(password, user.password)) {
     const token = toJWT({ id: user.id });
-    res.status(200).send({ token: token });
+    res.status(200).send({ token: token, email:user.email, id:user.id });
   } else {
     res.status(400).send({
       message: "Password was incorrect"
