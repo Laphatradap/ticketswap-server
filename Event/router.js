@@ -33,7 +33,7 @@ router.get("/events", async (req, res, next) => {
       limit,
       offset,
       order: [
-        ['createdAt', 'DESC']
+        ['createdAt', 'ASC']
       ],
       include: [Ticket],
       where: {

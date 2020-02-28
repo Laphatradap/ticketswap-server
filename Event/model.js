@@ -16,7 +16,7 @@ Event.hasMany(Ticket);
 
 startUpdb = async () => {
   try {
-    await Event.sync({ force: true })
+    await Event.sync({ force: false })
     await Event.bulkCreate([
       {
     name: "PTOLEMEA Release Concert",
