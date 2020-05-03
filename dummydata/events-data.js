@@ -1,24 +1,7 @@
-const db = require("../db");
-const Sequelize = require("sequelize");
-const Ticket = require("../Ticket/model");
-// const events = require("../dummydata/events-data");
+// const Event = require("../Event/model")
 
-const Event = db.define("event", {
-  name: Sequelize.STRING,
-  description: Sequelize.STRING(511),
-  start_date: Sequelize.STRING,
-  end_date: Sequelize.STRING,
-  imgUrl: Sequelize.STRING(511)
-});
-
-Ticket.belongsTo(Event);
-Event.hasMany(Ticket);
-
-startUpdb = async () => {
-  try {
-    await Event.sync({ force: false })
-    await Event.bulkCreate([
-      {
+const events = [
+  {
     name: "PTOLEMEA Release Concert",
     description: "Local female-fronted alternative rock band Ptolemea have established themselves as a vocally excellent live act with a melancholic, dreamy twist. With a powerful voice, tight grooves and grungy riffs, the outfit delivers finest rock music.",
     start_date: "2020-03-13",
@@ -39,45 +22,27 @@ startUpdb = async () => {
     end_date: "2020-03-07",
     imgUrl: "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F94050389%2F325954880399%2F1%2Foriginal.20200225-145004?w=800&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C30%2C2400%2C1200&s=661828d4bf9bacdffb379a5fdaf42c22"
   }
-])
-  } catch (err) {
-    console.error(err)
-  }
-}
+]
 
-startUpdb()
-
-
-
-//     // .then(() => {
-//     //   // console.log("events", events.length);
-//     //   Promise.all(events.map(e => Event.create(e)));
-//     // })
-//     // .catch(err => {
-//     //   console.error(err);
-//     // });
+// function isIdUnique (id, done) {
+//   Event.count({where: {id:id}})
+//     .then(count => {
+//       done(count > 0) ? true : false
+//     })
 // }
 
-
-// async () => {
-//   await Event.sync({ force: false })
+// isIdUnique(id, function(isUnique) {
+//   if(isUnique)
+//   Event.bulkCreate(events)
 //     .then(() => {
-//     console.log("events", events.length);
+//       return Event.findAll()
+//     })
+//     .then(function(res) {
+//       res.json(res)
+//     })
+//     .catch((err) => {
+//       res.json(err)
+//     });
+// })
 
-//     const id = Event.findByPk(1);
-//     console.log("id", id);
-
-//     if (id === null) {
-//       Event.bulkCreate(events, { validate: true })
-//         .then(() => {
-//           console.log("created");
-//         })
-//         .catch(err => {
-//           console.log("failed");
-//           console.log(err);
-//         });
-//     }
-//   });
-// };
-
-module.exports = Event
+module.exports = events
